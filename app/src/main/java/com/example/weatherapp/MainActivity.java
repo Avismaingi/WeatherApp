@@ -2,12 +2,15 @@ package com.example.weatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,8 +36,13 @@ public class MainActivity extends AppCompatActivity {
             result = task.execute(url).get();
         } catch (Exception e) {
 //            Log.i("Exception", e.toString());
+            Toast.makeText(this, "Could not Find Weather", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+
+        // To remove keyboard once search is don
+        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(text.getWindowToken(), 0);
 
         Log.i("Result", result);
     }
@@ -63,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                Toast.makeText(MainActivity.this, "Could not Find Weather", Toast.LENGTH_SHORT).show();
                 return "Failed";
             }
             return result;
@@ -100,11 +109,11 @@ public class MainActivity extends AppCompatActivity {
                 String weatherInfo = jsonObject.getString("weather");
                 String tempInfo = jsonObject.getString("main");
                 JSONObject jsonObject1 = new JSONObject(tempInfo);
-                String temp=jsonObject1.getString("temp");
+                String temp = jsonObject1.getString("temp");
                 Log.i("test", temp);
 
-                Double temperature=Double.parseDouble(temp);
-                temperature =temperature-273;
+                Double temperature = Double.parseDouble(temp);
+                temperature = temperature - 273;
 
 
                 JSONArray arr1 = new JSONArray(weatherInfo);
@@ -113,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 TextView weather = (TextView) findViewById(R.id.weather);
                 TextView t = (TextView) findViewById(R.id.temperature);
 
-                t.setText(String.format("%.2f",temperature));
+                t.setText(String.format("%.2f", temperature));
 
 //                JSONArray arr=new JSONArray(weatherInfo);
 
